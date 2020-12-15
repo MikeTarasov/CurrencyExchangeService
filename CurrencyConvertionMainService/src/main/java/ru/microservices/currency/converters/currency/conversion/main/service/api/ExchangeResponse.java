@@ -1,4 +1,4 @@
-package ru.microservices.currency.converters.currency.conversion.main.service;
+package ru.microservices.currency.converters.currency.conversion.main.service.api;
 
 import lombok.AllArgsConstructor;
 

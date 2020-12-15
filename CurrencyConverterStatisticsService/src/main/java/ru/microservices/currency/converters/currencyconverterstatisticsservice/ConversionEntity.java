@@ -1,16 +1,19 @@
-package ru.microservices.currency.converters.currency.conversion.main.service;
+package ru.microservices.currency.converters.currencyconverterstatisticsservice;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "currency_conversion")
-public class CurrencyConversionBean {
+public class ConversionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,19 +27,7 @@ public class CurrencyConversionBean {
     private BigDecimal conversionMultiple;
     private BigDecimal quantity;
     private BigDecimal totalCalculatedAmount;
+    private LocalDateTime time;
     @Transient
     private int port;
-
-
-    public CurrencyConversionBean(Long userId, String from, String to, BigDecimal conversionMultiple, BigDecimal quantity,
-                                  BigDecimal totalCalculatedAmount, int port) {
-        super();
-        this.userId = userId;
-        this.from = from;
-        this.to = to;
-        this.conversionMultiple = conversionMultiple;
-        this.quantity = quantity;
-        this.totalCalculatedAmount = totalCalculatedAmount;
-        this.port = port;
-    }
 }
