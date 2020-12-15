@@ -33,7 +33,7 @@ public class ExchangerController {
         exchangeValue.setPort(
                 Integer.parseInt(Objects.requireNonNull(environment.getProperty("local.server.port"))));
 
-        if (Arrays.stream(CurrencyEnum.values()).noneMatch(currencyEnum -> currencyEnum.toString().equals(to)) ||
+        if (Arrays.stream(CurrencyEnum.values()).noneMatch(currencyEnum -> currencyEnum.toString().equals(from)) ||
                 Arrays.stream(CurrencyEnum.values()).noneMatch(currencyEnum -> currencyEnum.toString().equals(to))) {
 
             logger.error("Unsupported currency code: from= " + from + ", to= " + to);
