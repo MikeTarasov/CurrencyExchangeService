@@ -24,8 +24,10 @@ public class CurrencyConversionBean {
     private String from;
     @Column(name = "to_cur", nullable = false)
     private String to;
+    @Column(columnDefinition = "numeric(32, 16)")
     private BigDecimal conversionMultiple;
     private BigDecimal quantity;
+    @Column(columnDefinition = "numeric(32, 16)")
     private BigDecimal totalCalculatedAmount;
     private LocalDateTime time;
     @Transient
@@ -43,5 +45,19 @@ public class CurrencyConversionBean {
         this.totalCalculatedAmount = totalCalculatedAmount;
         this.port = port;
         time = LocalDateTime.now();
+    }
+
+    @Override
+    public String toString() {
+        return "Conversion{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", from='" + from + '\'' +
+                ", to='" + to + '\'' +
+                ", conversionMultiple=" + conversionMultiple +
+                ", quantity=" + quantity +
+                ", totalCalculatedAmount=" + totalCalculatedAmount +
+                ", time=" + time +
+                '}';
     }
 }

@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: statistics-service
+  datasource:
+    url: jdbc:${db.type}://${db.host}:${db.port}/${db.name}?reconnect=true&verifyServerCertificate=false&useSSL=false&requireSSL=false&serverTimezone=${db.timezone}
+    username: postgres
+    password: cfvnfrjq1
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+    hibernate:
+      ddl-auto: none
+
+server.port: 8200
+
+db:
+  type: postgresql
+  host: localhost
+  port: 5432
+  name: currency_converter
+  timezone: Europe/Moscow
+
+host.exchange.service: localhost:8000

@@ -1,4 +1,4 @@
-package ru.microservices.currency.converters.currency.conversion.main.service.api;
+package ru.microservices.currency.converters.currencyconverterstatisticsservice.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,8 +6,8 @@ import lombok.Data;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 
-@AllArgsConstructor
 @Data
+@AllArgsConstructor
 public class UserResponse {
 
     private final long userId;

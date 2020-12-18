@@ -13,8 +13,9 @@ import java.util.List;
 @FeignClient(name = "statistics-service", url = "${host.statistics.service}")
 public interface CurrencyConverterStatisticsServiceProxy {
 
-    @GetMapping("/statistics/user_id/{user_id}")
-    UserStatsResponse getUserStatistics(@PathVariable("user_id") String userId);
+    @GetMapping("/statistics/user_id/{user_id}/in-currency/{currency}")
+    UserStatsResponse getUserStatistics(@PathVariable("user_id") long userId,
+                                        @PathVariable("currency") String currency);
 
     @GetMapping("/statistics/single-request-more-than/{amount}")
     List<UserResponse> getUsersWithMaxSingleResponse(@PathVariable BigInteger amount);
@@ -22,9 +23,9 @@ public interface CurrencyConverterStatisticsServiceProxy {
     @GetMapping("/statistics/total-amount-more-than/{amount}")
     List<UserStatsResponse> getUsersWithMaxAmount(@PathVariable BigInteger amount);
 
-    @GetMapping("/statistics/popular-requests")
-    List<ConversionResponse> getPopularRequestStatistics();
+    @GetMapping("/statistics/popular-requests/limit/{limit}")
+    List<ConversionResponse> getPopularRequestStatistics(@PathVariable("limit") long limit);
 
-    @GetMapping("/statistics/top-amount-requests")
-    List<ConversionResponse> getTopAmountRequestStatistics();
+    @GetMapping("/statistics/top-amount-requests/limit/{limit}")
+    List<ConversionResponse> getTopAmountRequestStatistics(@PathVariable("limit") long limit);
 }

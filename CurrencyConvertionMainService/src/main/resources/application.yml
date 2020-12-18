@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: currency-conversion-service
+  datasource:
+    url: jdbc:${db.type}://${db.host}:${db.port}/${db.name}?reconnect=true&verifyServerCertificate=false&useSSL=false&requireSSL=false&serverTimezone=${db.timezone}
+    username: postgres
+    password: cfvnfrjq1
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+    hibernate.ddl-auto: update
+db:
+  type: postgresql
+  host: localhost
+  port: 5432
+  name: currency_converter
+  timezone: Europe/Moscow
+
+server:
+  port: 8100
+  address: localhost
+
+host:
+  exchange.service: localhost:8000
+  statistics.service: localhost:8200
+
+zuul:
+  routes:
+    statistics:
+      path: /statistics/*
+      url: http://${host.statistics.service}/spring-zuul-statistics-resource/statistics
+    currency-exchange:
+      path: /currency-exchange/*
+      url: http://${host.exchange.service}/spring-zuul-currency-exchange-resource/currency-exchange
+    exchange:
+      path: /exchange/*
+      url: http://${server.address}:${server.port}}/spring-zuul-exchange-resource/exchange
+    stats:
+      path: /stats/*
+      url: http://${server.address}:${server.port}}/spring-zuul-stats-resource/stats

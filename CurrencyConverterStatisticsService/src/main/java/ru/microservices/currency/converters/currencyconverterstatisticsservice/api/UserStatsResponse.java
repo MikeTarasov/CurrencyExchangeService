@@ -1,12 +1,12 @@
-package ru.microservices.currency.converters.currency.conversion.main.service.api;
+package ru.microservices.currency.converters.currencyconverterstatisticsservice.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.math.BigDecimal;
 
-@AllArgsConstructor
 @Data
+@AllArgsConstructor
 public class UserStatsResponse {
 
     private final long userId;

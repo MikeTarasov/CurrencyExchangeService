@@ -1,4 +1,4 @@
-package ru.microservices.currency.converters.currencyconverterstatisticsservice;
+package ru.microservices.currency.converters.currencyconverterstatisticsservice.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,8 +24,10 @@ public class ConversionEntity {
     private String from;
     @Column(name = "to_cur", nullable = false)
     private String to;
+    @Column(columnDefinition = "numeric(32, 16)")
     private BigDecimal conversionMultiple;
     private BigDecimal quantity;
+    @Column(columnDefinition = "numeric(32, 16)")
     private BigDecimal totalCalculatedAmount;
     private LocalDateTime time;
     @Transient
