@@ -7,7 +7,7 @@ import ru.microservices.currency.converters.currency.conversion.main.service.api
 import ru.microservices.currency.converters.currency.conversion.main.service.api.UserResponse;
 import ru.microservices.currency.converters.currency.conversion.main.service.api.UserStatsResponse;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.util.List;
 
 @FeignClient(name = "statistics-service", url = "${host.statistics.service}")
@@ -17,11 +17,13 @@ public interface CurrencyConverterStatisticsServiceProxy {
     UserStatsResponse getUserStatistics(@PathVariable("user_id") long userId,
                                         @PathVariable("currency") String currency);
 
-    @GetMapping("/statistics/single-request-more-than/{amount}")
-    List<UserResponse> getUsersWithMaxSingleResponse(@PathVariable BigInteger amount);
+    @GetMapping("/statistics/single-request-more-than/{amount}/in-currency/{currency}")
+    List<UserResponse> getUsersWithMaxSingleResponse(@PathVariable("amount") BigDecimal amount,
+                                                     @PathVariable("currency") String currency);
 
-    @GetMapping("/statistics/total-amount-more-than/{amount}")
-    List<UserStatsResponse> getUsersWithMaxAmount(@PathVariable BigInteger amount);
+    @GetMapping("/statistics/total-amount-more-than/{amount}/in-currency/{currency}")
+    List<UserStatsResponse> getUsersWithMaxAmount(@PathVariable("amount") BigDecimal amount,
+                                                  @PathVariable("currency") String currency);
 
     @GetMapping("/statistics/popular-requests/limit/{limit}")
     List<ConversionResponse> getPopularRequestStatistics(@PathVariable("limit") long limit);

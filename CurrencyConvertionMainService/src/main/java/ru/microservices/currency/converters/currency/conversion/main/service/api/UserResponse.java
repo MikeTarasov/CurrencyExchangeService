@@ -3,7 +3,7 @@ package ru.microservices.currency.converters.currency.conversion.main.service.ap
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
@@ -11,6 +11,6 @@ import java.time.LocalDateTime;
 public class UserResponse {
 
     private final long userId;
-    private final BigInteger amount;
+    private final BigDecimal amount;
     private final LocalDateTime time;
 }
