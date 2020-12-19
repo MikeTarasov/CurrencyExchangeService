@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import ru.microservices.currency.converters.currency.conversion.main.service.api.ConversionResponse;
 import ru.microservices.currency.converters.currency.conversion.main.service.api.ExchangeResponse;
 import ru.microservices.currency.converters.currency.conversion.main.service.api.UserResponse;
 import ru.microservices.currency.converters.currency.conversion.main.service.api.UserStatsResponse;
@@ -16,6 +17,7 @@ import ru.microservices.currency.converters.currency.conversion.main.service.pro
 import ru.microservices.currency.converters.currency.conversion.main.service.proxy.CurrencyExchangeServiceProxy;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -57,7 +59,7 @@ public class CurrencyConversionController {
 
     @GetMapping("/stats/user-statistics/user-id/{user-id}/in-currency/{currency}")
     public ResponseEntity<?> getUserStatistics(@PathVariable("user-id") long userId,
-                                               @PathVariable("currency") String currency) {
+                                               @PathVariable String currency) {
 
         UserStatsResponse userStatistics = statisticsProxy.getUserStatistics(userId, currency);
         logger.info(userStatistics.toString());
@@ -66,8 +68,8 @@ public class CurrencyConversionController {
     }
 
     @GetMapping("/stats/single-request-more-than/{amount}/in-currency/{currency}")
-    public ResponseEntity<?> getSingleRequestsMoreThan(@PathVariable("amount") BigDecimal amount,
-                                                       @PathVariable("currency") String currency) {
+    public ResponseEntity<?> getSingleRequestsMoreThan(@PathVariable BigDecimal amount,
+                                                       @PathVariable String currency) {
 
         List<UserResponse> usersWithMaxSingleResponse = statisticsProxy.getUsersWithMaxSingleResponse(amount, currency);
         logger.info(usersWithMaxSingleResponse.toString());
@@ -76,12 +78,31 @@ public class CurrencyConversionController {
     }
 
     @GetMapping("/stats/total-amount-more-than/{amount}/in-currency/{currency}")
-    public ResponseEntity<?> getUsersWithMaxAmount(@PathVariable("amount") BigDecimal amount,
-                                                   @PathVariable("currency") String currency) {
+    public ResponseEntity<?> getUsersWithMaxAmount(@PathVariable BigDecimal amount,
+                                                   @PathVariable String currency) {
 
         List<UserStatsResponse> usersWithMaxAmount = statisticsProxy.getUsersWithMaxAmount(amount, currency);
         logger.info(usersWithMaxAmount.toString());
 
         return ResponseEntity.status(200).body(usersWithMaxAmount);
+    }
+
+    @GetMapping("/stats/popular-requests/limit/{limit}")
+    public ResponseEntity<?> getPopularRequestStatistics(@PathVariable int limit) {
+        List<ConversionResponse> popularRequestStatistics = statisticsProxy.getPopularRequestStatistics(limit);
+        logger.info(popularRequestStatistics.toString());
+
+        return ResponseEntity.status(200).body(popularRequestStatistics);
+    }
+
+    @GetMapping("/stats/top-amount-requests/limit/{limit}")
+    public ResponseEntity<?> getTopAmountRequestStatistics(@PathVariable("limit") int limit) {
+        List<String> response = new ArrayList<>();
+
+        for (CurrencyConversionBean conversion : statisticsProxy.getTopAmountRequestStatistics(limit)) {
+            response.add(conversion.toResponseString());
+        }
+
+        return ResponseEntity.status(200).body(response);
     }
 }

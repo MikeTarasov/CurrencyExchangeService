@@ -60,4 +60,11 @@ public class CurrencyConversionBean {
                 ", time=" + time +
                 '}';
     }
+
+    public String toResponseString() {
+        return "{userId=".concat(String.valueOf(userId)).concat(", from='").concat(from).concat("', to='")
+                .concat(to).concat("', conversionMultiple=").concat(String.valueOf(conversionMultiple))
+                .concat(", quantity=").concat(String.valueOf(quantity)).concat(", time=").concat(String.valueOf(time))
+                .concat("}");
+    }
 }

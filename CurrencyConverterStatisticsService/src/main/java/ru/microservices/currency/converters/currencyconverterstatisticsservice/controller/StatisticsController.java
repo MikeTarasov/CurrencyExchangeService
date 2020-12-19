@@ -3,9 +3,11 @@ package ru.microservices.currency.converters.currencyconverterstatisticsservice.
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import ru.microservices.currency.converters.currencyconverterstatisticsservice.api.ConversionResponse;
 import ru.microservices.currency.converters.currencyconverterstatisticsservice.api.UserResponse;
 import ru.microservices.currency.converters.currencyconverterstatisticsservice.api.UserStatsResponse;
 import ru.microservices.currency.converters.currencyconverterstatisticsservice.model.ConversionEntity;
@@ -51,11 +53,7 @@ public class StatisticsController {
         List<UserResponse> result = new ArrayList<>();
         for (ConversionEntity conversion : repository.findAll()) {
             BigDecimal quantity = conversion.getQuantity();
-
-            if (!conversion.getFrom().equals(currency)) {
-                quantity = quantity.multiply(exchangeServiceProxy
-                        .retrieveExchangeValue(conversion.getFrom(), currency).getConversionMultiple());
-            }
+            quantity = convertToCurrency(quantity, conversion.getFrom(), currency);
 
             if (quantity.compareTo(amount) >= 0) {
                 result.add(new UserResponse(conversion.getUserId(), quantity, conversion.getTime()));
@@ -82,21 +80,36 @@ public class StatisticsController {
             }
         }
 
-        result.sort(Comparator.comparing(UserStatsResponse::getTotalAmount));
+        result.sort(Comparator.comparing(UserStatsResponse::getTotalAmount).reversed());
 
         return result;
     }
 
-//
-//    @GetMapping("/statistics/popular-requests/limit/{limit}")
-//    public List<ConversionResponse> getPopularRequestStatistics(@PathVariable("limit") long limit) {
-//        return null;
-//    }
-//
-//    @GetMapping("/statistics/top-amount-requests/limit/{limit}")
-//    public List<ConversionResponse> getTopAmountRequestStatistics(@PathVariable("limit") long limit) {
-//        return null;
-//    }
+
+    @GetMapping("/statistics/popular-requests/limit/{limit}")
+    public List<ConversionResponse> getPopularRequestStatistics(@PathVariable("limit") int limit) {
+        return repository.getPopularRequestStatistics(PageRequest.of(0, limit));
+    }
+
+    @GetMapping("/statistics/top-amount-requests/limit/{limit}")
+    public List<ConversionEntity> getTopAmountRequestStatistics(@PathVariable("limit") int limit) {
+        List<ConversionEntity> result = new ArrayList<>();
+        List<ConversionEntity> temp = new ArrayList<>();
+        String currency = "USD";
+
+        for (ConversionEntity conversion : repository.findAll()) {
+            BigDecimal totalCalculatedAmount = conversion.getTotalCalculatedAmount();
+            totalCalculatedAmount = convertToCurrency(totalCalculatedAmount, conversion.getTo(), currency);
+            conversion.setTotalCalculatedAmount(totalCalculatedAmount);
+            temp.add(conversion);
+        }
+        temp.sort(Comparator.comparing(ConversionEntity::getTotalCalculatedAmount).reversed());
+        for (int i = 0; i < limit; i++) {
+            result.add(temp.get(i));
+        }
+
+        return result;
+    }
 
     private UserStatsResponse getUserStatsResponseByUserIdAndCurrency(long userId, String currency) {
         List<ConversionEntity> conversions = repository.findByUserId(userId);
@@ -107,11 +120,7 @@ public class StatisticsController {
 
         for (ConversionEntity conversion : conversions) {
             BigDecimal quantity = conversion.getQuantity();
-
-            if (!conversion.getFrom().equals(currency)) {
-                quantity = quantity.multiply(exchangeServiceProxy
-                        .retrieveExchangeValue(conversion.getFrom(), currency).getConversionMultiple());
-            }
+            quantity = convertToCurrency(quantity, conversion.getFrom(), currency);
 
             totalAmount = totalAmount.add(quantity);
             minAmount = minAmount.min(quantity);
@@ -122,5 +131,12 @@ public class StatisticsController {
 
 
         return new UserStatsResponse(userId, countOperations, minAmount, maxAmount, avrAmount, totalAmount);
+    }
+
+    private BigDecimal convertToCurrency(BigDecimal quantity, String from, String to) {
+        if (!from.equals(to)) {
+            return quantity.multiply(exchangeServiceProxy.retrieveExchangeValue(from, to).getConversionMultiple());
+        }
+        return quantity;
     }
 }

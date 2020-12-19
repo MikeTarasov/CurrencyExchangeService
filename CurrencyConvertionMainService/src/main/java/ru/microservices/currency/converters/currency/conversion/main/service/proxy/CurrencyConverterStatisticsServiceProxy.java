@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import ru.microservices.currency.converters.currency.conversion.main.service.api.ConversionResponse;
 import ru.microservices.currency.converters.currency.conversion.main.service.api.UserResponse;
 import ru.microservices.currency.converters.currency.conversion.main.service.api.UserStatsResponse;
+import ru.microservices.currency.converters.currency.conversion.main.service.model.CurrencyConversionBean;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -26,8 +27,8 @@ public interface CurrencyConverterStatisticsServiceProxy {
                                                   @PathVariable("currency") String currency);
 
     @GetMapping("/statistics/popular-requests/limit/{limit}")
-    List<ConversionResponse> getPopularRequestStatistics(@PathVariable("limit") long limit);
+    List<ConversionResponse> getPopularRequestStatistics(@PathVariable("limit") int limit);
 
     @GetMapping("/statistics/top-amount-requests/limit/{limit}")
-    List<ConversionResponse> getTopAmountRequestStatistics(@PathVariable("limit") long limit);
+    List<CurrencyConversionBean> getTopAmountRequestStatistics(@PathVariable("limit") int limit);
 }

@@ -11,6 +11,6 @@ public class ConversionResponse {
 
     private final String from;
     private final String to;
-    private final long count;
-    private final BigDecimal amount;
+    private final long countConversions;
+    private final BigDecimal totalAmount;
 }
