@@ -7,10 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import ru.microservices.currency.converters.currency.conversion.main.service.api.ConversionResponse;
-import ru.microservices.currency.converters.currency.conversion.main.service.api.ExchangeResponse;
-import ru.microservices.currency.converters.currency.conversion.main.service.api.UserResponse;
-import ru.microservices.currency.converters.currency.conversion.main.service.api.UserStatsResponse;
+import ru.microservices.currency.converters.currency.conversion.main.service.api.*;
 import ru.microservices.currency.converters.currency.conversion.main.service.model.CurrencyConversionBean;
 import ru.microservices.currency.converters.currency.conversion.main.service.model.CurrencyConversionRepository;
 import ru.microservices.currency.converters.currency.conversion.main.service.proxy.CurrencyConverterStatisticsServiceProxy;
@@ -97,10 +94,10 @@ public class CurrencyConversionController {
 
     @GetMapping("/stats/top-amount-requests/limit/{limit}")
     public ResponseEntity<?> getTopAmountRequestStatistics(@PathVariable("limit") int limit) {
-        List<String> response = new ArrayList<>();
+        List<TopAmountConversionResponse> response = new ArrayList<>();
 
         for (CurrencyConversionBean conversion : statisticsProxy.getTopAmountRequestStatistics(limit)) {
-            response.add(conversion.toResponseString());
+            response.add(new TopAmountConversionResponse(conversion));
         }
 
         return ResponseEntity.status(200).body(response);

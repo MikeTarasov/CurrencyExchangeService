@@ -3,19 +3,21 @@ package ru.microservices.currency.converters.currencyconverterstatisticsservice.
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import ru.microservices.currency.converters.currencyconverterstatisticsservice.api.ConversionResponse;
+import org.springframework.stereotype.Repository;
+import ru.microservices.currency.converters.currencyconverterstatisticsservice.projection.ConversionProjection;
 
 import java.util.List;
 
+@Repository
 public interface ConversionEntityRepository extends JpaRepository<ConversionEntity, Long> {
 
     List<ConversionEntity> findByUserId(long userId);
 
-    @Query(name = "SELECT user_id FROM currency_conversion GROUP BY user_id", nativeQuery = true)
+    @Query(value = "SELECT DISTINCT (user_id) FROM currency_conversion", nativeQuery = true)
     List<Long> getUsersId();
 
-    @Query(name = "SELECT from_cur, to_cur, COUNT(*) AS count_conversions, SUM(quantity) AS total_amount " +
-            "FROM currency_conversion GROUP BY (from_cur, to_cur) ORDER BY count_conversions desc, total_amount desc," +
+    @Query(value = "SELECT from_cur AS fromCur, to_cur AS toCur, COUNT(*) AS count, SUM(quantity) AS total " +
+            "FROM currency_conversion GROUP BY (from_cur, to_cur) ORDER BY count DESC, total DESC," +
             " from_cur", nativeQuery = true)
-    List<ConversionResponse> getPopularRequestStatistics(Pageable pageable);
+    List<ConversionProjection> getPopularRequestStatistics(Pageable pageable);
 }

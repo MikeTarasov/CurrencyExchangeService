@@ -12,6 +12,7 @@ import ru.microservices.currency.converters.currencyconverterstatisticsservice.a
 import ru.microservices.currency.converters.currencyconverterstatisticsservice.api.UserStatsResponse;
 import ru.microservices.currency.converters.currencyconverterstatisticsservice.model.ConversionEntity;
 import ru.microservices.currency.converters.currencyconverterstatisticsservice.model.ConversionEntityRepository;
+import ru.microservices.currency.converters.currencyconverterstatisticsservice.projection.ConversionProjection;
 import ru.microservices.currency.converters.currencyconverterstatisticsservice.proxy.CurrencyExchangeServiceProxy;
 
 import java.math.BigDecimal;
@@ -59,7 +60,8 @@ public class StatisticsController {
                 result.add(new UserResponse(conversion.getUserId(), quantity, conversion.getTime()));
             }
         }
-        result.sort(Comparator.comparing(UserResponse::getAmount));
+        result.sort(Comparator.comparing(UserResponse::getAmount).reversed());
+        logger.info(result.toString());
 
         return result;
     }
@@ -69,31 +71,34 @@ public class StatisticsController {
                                                          @PathVariable("currency") String currency) {
         List<UserStatsResponse> result = new ArrayList<>();
 
-        List<Long> usersId = repository.getUsersId();
+        for (Long userId : repository.getUsersId()) {
 
-        for (long userId : usersId) {
+            UserStatsResponse userStatsResponse =
+                    getUserStatsResponseByUserIdAndCurrency(userId, currency);
 
-            UserStatsResponse userStatsResponse = getUserStatsResponseByUserIdAndCurrency(userId, currency);
-
-            if (userStatsResponse.getMinAmount().compareTo(amount) >= 0) {
+            if (userStatsResponse.getTotalAmount().compareTo(amount) >= 0) {
                 result.add(userStatsResponse);
             }
         }
 
         result.sort(Comparator.comparing(UserStatsResponse::getTotalAmount).reversed());
-
+        logger.info(result.toString());
         return result;
     }
 
 
     @GetMapping("/statistics/popular-requests/limit/{limit}")
     public List<ConversionResponse> getPopularRequestStatistics(@PathVariable("limit") int limit) {
-        return repository.getPopularRequestStatistics(PageRequest.of(0, limit));
+        List<ConversionResponse> result = new ArrayList<>();
+        for (ConversionProjection conversionProjection : repository.getPopularRequestStatistics(PageRequest.of(0, limit))) {
+            result.add(new ConversionResponse(conversionProjection));
+        }
+        logger.info(result.toString());
+        return result;
     }
 
     @GetMapping("/statistics/top-amount-requests/limit/{limit}")
     public List<ConversionEntity> getTopAmountRequestStatistics(@PathVariable("limit") int limit) {
-        List<ConversionEntity> result = new ArrayList<>();
         List<ConversionEntity> temp = new ArrayList<>();
         String currency = "USD";
 
@@ -104,9 +109,8 @@ public class StatisticsController {
             temp.add(conversion);
         }
         temp.sort(Comparator.comparing(ConversionEntity::getTotalCalculatedAmount).reversed());
-        for (int i = 0; i < limit; i++) {
-            result.add(temp.get(i));
-        }
+        List<ConversionEntity> result = temp.subList(0, Math.min(limit, temp.size()));
+        logger.info(result.toString());
 
         return result;
     }
@@ -128,7 +132,6 @@ public class StatisticsController {
         }
         long countOperations = conversions.size();
         BigDecimal avrAmount = totalAmount.divide(BigDecimal.valueOf(countOperations), MathContext.DECIMAL64);
-
 
         return new UserStatsResponse(userId, countOperations, minAmount, maxAmount, avrAmount, totalAmount);
     }
