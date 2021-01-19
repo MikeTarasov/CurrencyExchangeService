@@ -1,6 +1,9 @@
 spring:
   application:
     name: statistics-service
+  cloud:
+    config:
+      uri: http://localhost:8088
   datasource:
     url: jdbc:${db.type}://${db.host}:${db.port}/${db.name}?reconnect=true&verifyServerCertificate=false&useSSL=false&requireSSL=false&serverTimezone=${db.timezone}
     username: postgres
@@ -21,4 +24,4 @@ db:
   name: currency_converter
   timezone: Europe/Moscow
 
-host.exchange.service: localhost:8000
+host.exchange.service: localhost:8100

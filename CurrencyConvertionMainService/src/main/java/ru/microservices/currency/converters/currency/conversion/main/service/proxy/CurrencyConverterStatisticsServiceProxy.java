@@ -1,5 +1,6 @@
 package ru.microservices.currency.converters.currency.conversion.main.service.proxy;
 
+//import org.springframework.cloud.netflix.ribbon.RibbonClient;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +13,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @FeignClient(name = "statistics-service", url = "${host.statistics.service}")
+//@RibbonClient(name = "statistics-service")
 public interface CurrencyConverterStatisticsServiceProxy {
 
     @GetMapping("/statistics/user_id/{user_id}/in-currency/{currency}")

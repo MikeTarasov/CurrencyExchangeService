@@ -1,0 +1,23 @@
+server:
+  port: 8060
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8061/eureka/
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} ${LOG_LEVEL_PATTERN:-%5p} %m%n"
+
+zuul:
+  routes:
+    main:
+      path: /exchange/**, /stats/**
+      serviceId: currency-conversion-main-service
+    statistics:
+      path: /statistics/**
+      serviceId: currency-converter-statistics-service
+    exchange:
+      path: /currency-exchange/**
+      serviceId: currency-exchanger-service

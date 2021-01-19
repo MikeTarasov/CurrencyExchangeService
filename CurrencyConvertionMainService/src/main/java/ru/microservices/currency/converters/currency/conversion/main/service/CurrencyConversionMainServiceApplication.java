@@ -1,9 +1,11 @@
 package ru.microservices.currency.converters.currency.conversion.main.service;
 
+
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -17,7 +19,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableFeignClients("ru.microservices.currency.converters.currency.conversion.main.service.proxy")
 @EnableDiscoveryClient
 @EnableSwagger2
-@EnableZuulProxy
+@OpenAPIDefinition(info = @Info(title = "Currency conversion API", version = "1.0",
+        description = "Documentation Currency conversion API v1.0"))
 public class CurrencyConversionMainServiceApplication {
 
     public static void main(String[] args) {
